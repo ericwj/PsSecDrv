@@ -94,9 +94,9 @@ Seriously, really. And it's not hard if you have Windows Pro.
 * Download a Windows Insider Preview image file (.iso) from http://go.microsoft.com/fwlink/?LinkId=691048
 Perhaps this requires using the Media Creation Tool option on that page.
 * Enable Hyper-V (only available on Windows 8/8.1/10 Pro)
-```PowerShell
-$result = Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
-if ($result.RestartNeeded) { Restart-Computer -Confirm }```
+
+        $result = Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
+        if ($result.RestartNeeded) { Restart-Computer -Confirm }
 
 * Then start `Hyper-V Management`, create a Virtual Machine and select the Windows Insider Preview iso file as the CD to boot from.
 * Start the VM and follow the prompts to install Windows in the Virtual Machine
