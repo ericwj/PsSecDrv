@@ -37,7 +37,10 @@ class SecDrvBootstrap {
                 Write-Warning "Could not parse 'OriginSite'."
             }
         }
-        return "https://raw.githubusercontent.com/ericwj/PsSecDrv/master/src/SECDRV/SECDRV.ps1"
+        if (![String]::IsNullOrWhitespace($env:SECDRV_ORIGINSITE)) {
+            return $env:SECDRV_ORIGINSITE
+        }
+        return "https://raw.githubusercontent.com/ericwj/PsSecDrv/master/"
     }
     # During dev/test, download from the URL "OriginSite" in UserSecrets (possibly file:////)
     static [bool]GetVerbosePreference() {
@@ -77,10 +80,10 @@ class SecDrvBootstrap {
     # Default path to store the driver and the publisher certificate etc
     static [string]$TargetPathDefault = [SecDrvBootstrap]::UserSecretsPath
     static [string[]]$Manifest = @(
-        "$([SecDrvBootstrap]::ModuleName).psd1=TargetPathPsm",
-        "$([SecDrvBootstrap]::ModuleName).psm1=TargetPathPsm",
+        "src/SECDRV/SECDRV.psd1=TargetPathPsm",
+        "src/SECDRV/SECDRV.psm1=TargetPathPsm",
 #        "$([SecDrvBootstrap]::ModuleName).ChoiceDialog.psm1=TargetPathPsm",
-        "SECDRV.sys=TargetPathDefault"
+        "tools/SECDRV/SECDRV.sys=TargetPathDefault"
     )
     static [System.Collections.Generic.Dictionary[string,string]]GetManifestUrls() {
         $Result = [System.Collections.Generic.Dictionary[string,string]]::new()
