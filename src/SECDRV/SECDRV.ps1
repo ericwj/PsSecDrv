@@ -37,7 +37,7 @@ class SecDrvBootstrap {
                 Write-Warning "Could not parse 'OriginSite'."
             }
         }
-        return "https://github.com/rawcontent/blabla/"
+        return "https://raw.githubusercontent.com/ericwj/PsSecDrv/master/src/SECDRV/SECDRV.ps1"
     }
     # During dev/test, download from the URL "OriginSite" in UserSecrets (possibly file:////)
     static [bool]GetVerbosePreference() {
