@@ -53,7 +53,7 @@ file called `secrets.json` in it. You can then configure a few options like so:
 ```JSON
 {
     "OriginSite": "file:////COMPUTERNAME/C$/PathToRepoDirectory",
-    "DevPath": "\\\\COMPUTERNAME\C$\PathToRepoDirectory"
+    "DevPath": "\\\\COMPUTERNAME\\C$\\PathToRepoDirectory"
     "Verbose": true,
     "Confirm": true
 }
