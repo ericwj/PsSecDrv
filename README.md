@@ -37,7 +37,9 @@ prerequisites for installing it can be installed.
  * Install the new certificate as a Trusted Root Certificate
  * Install the new certificate as a Trusted Publisher Certificate
  * Install the signed version of SECDRV.sys on your computer
-
+ * Enabling Windows to load SECDRV by allowing it to load drivers signed with a certificate not chained to 
+ a trusted Microsoft Hardware Publisher certificate. (See `What BOOTSIGNING TEST MODE` below for more info)
+ 
 This script does not export the private key used to sign the driver, meaning that noone - not even you - can use this
 certificate for say malicious purposes and the certificate is useless for use on any computer but yours.
 
@@ -66,7 +68,7 @@ These commands can be copied into text files, saved with file extension .ps1 and
 There is no uninstallation option, but you can manually remove all (traces of) this script by:
 * Disable and stop SECDRV by copy/pasting this into PowerShell (Administrator)
     `Stop-SecDrv; Disable-SecDrv`
-* Running `sc delete secdrv` in a Command Prompt (Administrator) or PowerShell (Administrator)
+* Running `cmd /c sc delete secdrv` in a Command Prompt (Administrator) or PowerShell (Administrator)
 * Copying `%APPDATA%\Microsoft\UserSecrets\SECDRV` in the File Explorer address bar and deleting that folder
 * Copying `%USERPROFILE%\Documents\WindowsPowerShell\Modules\SECDRV` in the File Explorer address bar and deleting that folder
 * Copying `%WINDIR%\System32` in the File Explorer address bar and deleting SECDRV.sys.
@@ -92,3 +94,31 @@ they can think of, like seeing you type all your passwords and credit card numbe
 Apart from this, SECDRV is also a relic from a gone era where games were distributed on 
 CD's and DVD's. However, the removal of this driver also prevents users who still own legitimate copies of
 older games that use this copy protection mechanism from running these games on their Windows 10 computers.
+
+# What is BOOTSIGNING TEST MODE?
+All drivers that Windows can load by default must be submitted to Microsoft for Windows Hardware Quality Labs (WHQL)
+verification, after which Microsoft signs them (or hands out a means for the creator of the driver to sign the driver)
+with a certificate that chains back to a Microsoft Hardware Publisher certificate.
+
+BOOTSIGNING TEST MODE is a way in which Windows computers can boot that turns of the WHQL verification selectively.
+It is a means for driver developers (let's say NVIDIA) to let Windows load drivers that are not (yet)
+signed by a certificate that chains back to a Microsoft Hardware Publisher certificate. It's meant for testing purposes
+and it's enabled or disabled at boot time - when the computer starts, so it's called BOOTSIGNING TEST MODE.
+However, drivers must still be signed and the computer must still be told to trust the certificate with which
+drivers are signed, before a driver will actually load. Hence, WHQL verification is disabled 'selectively'.
+
+Certificate chaining is the way in which computers can be made to 'trust'. Each chained certificate is checked
+by humans - in this case the Microsoft WHQL people - to make sure that the trust that is implied by a certificate 
+and acted upon by computers all over the world is actually real. Computers also have a way to 'untrust' lets say
+a driver publisher that screws up and whose certificate is compromised. That's called a revocation list. 
+
+Each Windows computer has a list of 
+* Trusted Publishers that can publish drivers (let's say NVIDIA), 
+* Trusted Root Certification Authorities (Microsoft in this case)
+* and a revocation list (including e.g. compromised certificates from DigiCert, to mention an example)
+
+SECDRV.sys can be loaded and started without a WHQL certificate by enabling BOOTSIGNING TEST MODE,
+by signing the driver with a certificate and by making Windows trust that certificate both as a software
+publisher certificate and as a root certificate (the top of the certificate chain).  
+
+This is a bit of a simplification, but it should give a quick overview of how this security feature works.
