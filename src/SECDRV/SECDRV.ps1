@@ -1,9 +1,3 @@
-# To test, run: powershell -ExecutionPolicy Unrestricted -Command "&{ iex ((gc '\\%COMPUTERNAME%\C$\Users\%USERNAME%\Source\Local\PowerShell\ComputerManagement\SecDrvPsm\SECDRV.ps1') -join """"`n""""); Install-SecDrv -Confirm -Verbose }"
-
-#&{$Branch='dev';$wc=New-Object System.Net.WebClient;$wc.Proxy=[System.Net.WebRequest]::DefaultWebProxy;$wc.Proxy.Credentials=[System.Net.CredentialCache]::DefaultNetworkCredentials;Invoke-Expression ($wc.DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}
-
-
-
 class SecDrvBootstrap {
     # Load UserSecrets - System-specific configuration
     static [object]GetUserSecrets() {
@@ -80,10 +74,10 @@ class SecDrvBootstrap {
     # Default path to store the driver and the publisher certificate etc
     static [string]$TargetPathDefault = [SecDrvBootstrap]::UserSecretsPath
     static [string[]]$Manifest = @(
-        "src/SECDRV/SECDRV.psd1=TargetPathPsm",
-        "src/SECDRV/SECDRV.psm1=TargetPathPsm",
+        "src/SECDRV/SECDRV.psd1=[TargetPathPsm]\SECDRV.psd1",
+        "src/SECDRV/SECDRV.psm1=[TargetPathPsm]\SECDRV.psm1",
 #        "$([SecDrvBootstrap]::ModuleName).ChoiceDialog.psm1=TargetPathPsm",
-        "tools/SECDRV/SECDRV.sys=TargetPathDefault"
+        "tools/SECDRV/SECDRV.sys=[TargetPathDefault]\SECDRV.sys"
     )
     static [System.Collections.Generic.Dictionary[string,string]]GetManifestUrls() {
         $Result = [System.Collections.Generic.Dictionary[string,string]]::new()
@@ -96,20 +90,14 @@ class SecDrvBootstrap {
         $Default = [SecDrvBootstrap]::TargetPathDefault
         foreach ($file in [SecDrvBootstrap]::Manifest) {
             $split = $file -split "="
-            $name = $split[0] # SECDRV.sys
-            $spec = $split[1] # TargetPathDefault
-            $TargetPath = $null
-            switch ($spec) {
-                "TargetPathPsm" {
-                    $TargetPath = Join-Path $Psm $name
-                }
-                "TargetPathDefault" {
-                    $TargetPath = Join-Path $Default $name
-                }
-                default {
-                    $message = "The target path specification '$spec' for file '$file' in the manifest is unknown."
-                    throw [System.ArgumentException]::new($message)
-                }
+            $name = $split[0] # tools/SECDRV/SECDRV.sys
+            $spec = $split[1] # [TargetPathDefault]\SECDRV.sys
+            $TargetPath = $spec `
+                -replace "\[TargetPathPsm\]", ([SecDrvBootstrap]::TargetPathPsm) `
+                -replace "\[TargetPathDefault\]", ([SecDrvBootstrap]::TargetPathDefault)
+            if ($TargetPath -eq $spec) {
+                $message = "The target path specification '$spec' for file '$file' in the manifest is unknown."
+                throw [System.ArgumentException]::new($message)                
             }
             $FileOrigin = $OriginSite
             if ($OriginSiteIsFile) {
@@ -142,7 +130,7 @@ Write-Warning "Downloading the SECDRV intaller module from $([SecDrvBootstrap]::
 $origin = [uri]::new([SecDrvBootstrap]::GetOriginSite())
 foreach ($ding in $urls.Keys) {
     if ($origin.IsFile -or $origin.IsUnc) {
-        $short = "." + $ding.Substring([System.IO.Path]::GetDirectoryName($ding).Length)
+        $short = "." + $ding.Substring($origin.LocalPath.Length)
     } else {
         $short = $origin.MakeRelative([uri]::new($ding))
     }
