@@ -20,7 +20,7 @@ you ever having done anything to make it so. SECDRV won't load with Secure Boot 
 Right click Start and pick Command Prompt (Administrator). Copy and pass these three lines of text.
 ```PowerShell 
 rem Start
-PowerShell -NoExit -ExecutionPolicy RemoteSigned -Command iex (curl "https://raw.githubusercontent.com/ericwj/PsSecDrv/master/src/SECDRV/SECDRV.ps1").Content
+PowerShell -NoExit -ExecutionPolicy RemoteSigned -Command iex (curl "https://raw.githubusercontent.com/ericwj/PsSecDrv/master/src/SECDRV/SECDRV.ps1" -UseBasicParsing).Content
 rem End
 ```
 PowerShell will have done nothing but copy a few files to your computer (including SECDRV.sys). Now copy and paste this.
