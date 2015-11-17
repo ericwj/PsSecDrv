@@ -97,13 +97,23 @@ Perhaps this requires using the Media Creation Tool option on that page.
 ```PowerShell
 $result = Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
 if ($result.RestartNeeded) { Restart-Computer -Confirm }```
+
 * Then start `Hyper-V Management`, create a Virtual Machine and select the Windows Insider Preview iso file as the CD to boot from.
 * Start the VM and follow the prompts to install Windows in the Virtual Machine
 * Once you've figured out you have five seconds to press a key and Windows is installed, go straight to Github
 and start copying the snippets above. 
 
 Note that most games won't run very well in a VM and even if they do, you'll need a Generation 1 VM to be able
-to use your physical CD's and DVD's inside a VM. However you can test the script without actually using SECDRV.
+to use your physical CD's and DVD's inside a VM. Whether your VM is a Generation 1 or Generation 2 VM is
+just an option to pick while making a new VM. However you can test the script without actually using SECDRV. 
+Note however that the script doesn't install the driver service completely.
+You need to run the setup program of a game which uses the driver to do that.
+
+* I made a copy of `Command and Conquer: Generals` (both CD's) using [Folder2Iso](http://www.trustfm.net/software/utilities/Folder2Iso.php)
+* Make sure to use GENERALS1 and GENERALS2 as the CD labels
+* Those can be mounted in a virtual CD-ROM drive and used to install the game (but not play it)
+* After that you can test whether SECDRV works by setting the driver to auto start ```Enable-SecDrv -AutoStart``` and rebooting
+* You can also run ```Start-SecDrv``` and ```cmd /c sc query secdrv``` to see if SECDRV works 
 
 To really use SECDRV, I recommend using Hyper-V Management to create a VHDX file and setup your computer to boot
 from it (only from a virtual Hard Disk, but on your real computer). There's help for that in your favorite search engine.
