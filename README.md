@@ -10,6 +10,10 @@ To learn a little bit about SECDRV.sys, see [What is SECDRV?](docs/SECDRV.md).
 ## Wow, this readme is long!
 OK here's the jump start.
 
+It isn't really safe to use SECDRV. All complaints aside, even if Microsoft has other reasons to remove it from Windows 10,
+this one is really good and enough all by itself. The objective might have been to make Windows 10 secure and allowing no
+excuses to compromise that goal. So use SECDRV (and by extension, this script) at your own risk!
+
 Disable Secure Boot in your BIOS if you have a modern say tablet which is BitLockered without 
 you ever having done anything to make it so. SECDRV won't load with Secure Boot enabled.
 
@@ -50,6 +54,25 @@ PowerShell in the process.
 ## What's the status?
 Making it run the first time completely flawless in a way that is convenient was an interesting undertaking so far
 and isn't finished yet.
+
+## Is it safe?
+No.
+
+No windows dressing, no excuses. It's not safe. (Yes, typo. No, I won't fix ;)
+
+But we want to play games, right? Even old games.
+
+I recommend you setup your computer to dual boot. For example using VHD boot. And use a Windows Insider Preview build
+to do that completely legally.
+
+And then use SECDRV (and this script) only on that Windows installation meant only for gaming, 
+where you never use your credit card and never edit your security info and which ideally also 
+doesn't have access to the hard disks partitions you use for your other Windows installation.
+
+But really, whatever you do, it's up to you and your responsibility to bear the consequences if something goes wrong.
+
+That said, you can use this script to install SECDRV and be quite sure it won't open back doors on your computer
+apart from running SECDRV.sys itself (which is a back door itself, and I hate to say I told you so). 
 
 ## How does it work?
 The instructions below perform the following tasks.
