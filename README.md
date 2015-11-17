@@ -5,7 +5,7 @@ PowerShell script and module to install the SECDRV copy protection driver on Win
 PsSecDrv is a bit of PowerShell script that can install SECDRV.sys on a computer running Windows 10, 
 eliminating almost all manual steps from this process, apart from starting the script.
 
-To learn a little bit about SECDRV.sys, see `What is SECDRV` below.
+To learn a little bit about SECDRV.sys, see [What is SECDRV?](docs/SECDRV.md).
 
 ## Wow, this readme is long!
 OK here's the jump start.
@@ -66,7 +66,7 @@ prerequisites for installing it can be installed.
  * Install the new certificate as a Trusted Publisher Certificate
  * Install the signed version of SECDRV.sys on your computer
  * Enabling Windows to load SECDRV by allowing it to load drivers signed with a certificate not chained to 
- a trusted Microsoft Hardware Publisher certificate. (See `What BOOTSIGNING TEST MODE` below for more info)
+ a trusted Microsoft Hardware Publisher certificate. (See [What BOOTSIGNING TEST MODE?](docs/BOOTSIGNING.md) for more info)
  
 This script does not export the private key used to sign the driver, meaning that noone - not even you - can use this
 certificate for say malicious purposes and the certificate is useless for use on any computer but yours.
@@ -90,75 +90,6 @@ By making a new computer!
 
 Seriously, really. And it's not hard if you have Windows Pro.
 
-* Go to http://insider.windows.com and become a Windows Insider.
-* Download a Windows Insider Preview image file (.iso) from http://go.microsoft.com/fwlink/?LinkId=691048
-Perhaps this requires using the Media Creation Tool option on that page.
-* Enable Hyper-V (only available on Windows 8/8.1/10 Pro)
+Read it in the [developer readme](docs/DEV.md).
 
-        $result = Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
-        if ($result.RestartNeeded) { Restart-Computer -Confirm }
 
-* Then start `Hyper-V Management`, create a Virtual Machine and select the Windows Insider Preview iso file as the CD to boot from.
-* Start the VM and follow the prompts to install Windows in the Virtual Machine
-* Once you've figured out you have five seconds to press a key and Windows is installed, go straight to Github
-and start copying the snippets above. 
-
-Note that most games won't run very well in a VM and even if they do, you'll need a Generation 1 VM to be able
-to use your physical CD's and DVD's inside a VM. Whether your VM is a Generation 1 or Generation 2 VM is
-just an option to pick while making a new VM. However you can test the script without actually using SECDRV. 
-Note however that the script doesn't install the driver service completely.
-You need to run the setup program of a game which uses the driver to do that.
-
-* I made a copy of `Command and Conquer: Generals` (both CD's) using [Folder2Iso](http://www.trustfm.net/software/utilities/Folder2Iso.php)
-* Make sure to use GENERALS1 and GENERALS2 as the CD labels
-* Those can be mounted in a virtual CD-ROM drive and used to install the game (but not play it)
-* After that you can test whether SECDRV works by setting the driver to auto start ```Enable-SecDrv -AutoStart``` and rebooting
-* You can also run ```Start-SecDrv``` and ```cmd /c sc query secdrv``` to see if SECDRV works 
-
-To really use SECDRV, I recommend using Hyper-V Management to create a VHDX file and setup your computer to boot
-from it (only from a virtual Hard Disk, but on your real computer). There's help for that in your favorite search engine.
-
-# What is SECDRV?
-SECDRV is a kernel driver in Windows Operating systems. It implements a copy protection technology
-commonly referred to as Safe Disc that is used to protect older games from being copied unbridled
-and distributed on illegally burnt media or through the Internet, Torrent sites, etc 
-
-However, as a kernel driver, it has complete and unrestricted access to the system on which it is running
-once it is installed and instructed to start. This is fine as long as both the way this software works
-and the actual implementation is secure and without (known) flaws. However, this is not the case.
-
-Windows 10 eliminates this driver from the operating system, because it has known security issues and is
-attack surface for malicious people to enter your computer without your knowledge and do practically anything
-they can think of, like seeing you type all your passwords and credit card numbers.
-
-Apart from this, SECDRV is also a relic from a gone era where games were distributed on 
-CD's and DVD's. However, the removal of this driver also prevents users who still own legitimate copies of
-older games that use this copy protection mechanism from running these games on their Windows 10 computers.
-
-# What is BOOTSIGNING TEST MODE?
-All drivers that Windows can load by default must be submitted to Microsoft for Windows Hardware Quality Labs (WHQL)
-verification, after which Microsoft signs them (or hands out a means for the creator of the driver to sign the driver)
-with a certificate that chains back to a Microsoft Hardware Publisher certificate.
-
-BOOTSIGNING TEST MODE is a way in which Windows computers can boot that turns of the WHQL verification selectively.
-It is a means for driver developers (let's say NVIDIA) to let Windows load drivers that are not (yet)
-signed by a certificate that chains back to a Microsoft Hardware Publisher certificate. It's meant for testing purposes
-and it's enabled or disabled at boot time - when the computer starts, so it's called BOOTSIGNING TEST MODE.
-However, drivers must still be signed and the computer must still be told to trust the certificate with which
-drivers are signed, before a driver will actually load. Hence, WHQL verification is disabled 'selectively'.
-
-Certificate chaining is the way in which computers can be made to 'trust'. Each chained certificate is checked
-by humans - in this case the Microsoft WHQL people - to make sure that the trust that is implied by a certificate 
-and acted upon by computers all over the world is actually real. Computers also have a way to 'untrust' lets say
-a driver publisher that screws up and whose certificate is compromised. That's called a revocation list. 
-
-Each Windows computer has a list of 
-* Trusted Publishers that can publish drivers (let's say NVIDIA), 
-* Trusted Root Certification Authorities (Microsoft in this case)
-* and a revocation list (including e.g. compromised certificates from DigiCert, to mention an example)
-
-SECDRV.sys can be loaded and started without a WHQL certificate by enabling BOOTSIGNING TEST MODE,
-by signing the driver with a certificate and by making Windows trust that certificate both as a software
-publisher certificate and as a root certificate (the top of the certificate chain).  
-
-This is a bit of a simplification, but it should give a quick overview of how this security feature works.
