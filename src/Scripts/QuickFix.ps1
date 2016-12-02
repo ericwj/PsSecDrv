@@ -9,10 +9,32 @@ cd $env:USERPROFILE
 
 # Create a private root certificate to sign driver with
 $DateTime = "{0:dd MMM yyyy HH:mm}" -f [System.DateTimeOffset]::Now.ToLocalTime()
-makecert -r -sr LocalMachine -ss Root -n "CN=Private Signing Certificate for SECDRV.sys on \\$env:COMPUTERNAME created by \\$env:USERDOMAIN\$env:USERNAME on $DateTime"
+makecert -r -sr LocalMachine -ss Root -pe -n "CN=Private Signing Certificate for SECDRV.sys on \\$env:COMPUTERNAME created by \\$env:USERDOMAIN\$env:USERNAME on $DateTime"
 # Find it in the certificate store
 $Certificate = dir Cert:\LocalMachine\Root | where Subject -Match SECDRV | sort NotBefore | select -Last 1
 Write-Host "Using certificate $($Certificate.Subject)"
+
+# Export to file then import to Cert:\LocalMachine\TrustedPublisher
+$Rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$RandomBytes = [byte[]]::new(16)
+$Rng.GetBytes($RandomBytes)
+$PasswordPlainText = [System.Convert]::ToBase64String($RandomBytes)
+$PasswordSecString = ConvertTo-SecureString -String $PasswordPlainText -AsPlainText -Force
+$SuppressOutput = Export-PfxCertificate -Cert $Certificate -FilePath "SECDRV.pfx" -Password $PasswordSecString -Confirm:$false
+$SuppressOutput = Import-PfxCertificate -FilePath "SECDRV.pfx" -Password $PasswordSecString -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
+
+# Delete the certificate with its private key exportable and import the pfx with non-exportable private key
+del "Cert:\LocalMachine\Root\$($Certificate.Thumbprint)"
+$SuppressOutput = Import-PfxCertificate -FilePath "SECDRV.pfx" -Password $PasswordSecString -CertStoreLocation Cert:\LocalMachine\Root
+
+# Zero and delete the pfx file and the password
+$PfxPath = "$((Get-Location).Path)\SECDRV.pfx"
+$PasswordPlainText = ""
+$PasswordSecString.Clear()
+$FileSize = [System.IO.File]::ReadAllBytes($PfxPath).Length
+$RandomBytes = [byte[]]::new($FileSize) # All zeroes
+[System.IO.File]::WriteAllBytes($PfxPath, $RandomBytes)
+del SECDRV.pfx
 
  $CDF = @(
     "[CatalogHeader]",
