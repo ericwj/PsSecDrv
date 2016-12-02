@@ -13,15 +13,6 @@ makecert -r -sr LocalMachine -ss Root -n "CN=Private Signing Certificate for SEC
 # Find it in the certificate store
 $Certificate = dir Cert:\LocalMachine\Root | where Subject -Match SECDRV | sort NotBefore | select -Last 1
 Write-Host "Using certificate $($Certificate.Subject)"
-# Export to file
-<# Don't need this - just need the thumbprint
-$Rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-$Pwd = [byte[]]::new(16)
-$Rng.GetBytes($Pwd)
-$PasswordPlainText = [System.Convert]::ToBase64String($Pwd)
-$PasswordSecString = ConvertTo-SecureString -String $PasswordPlainText -AsPlainText -Force
-Export-PfxCertificate -Cert $Certificate -FilePath "SECDRV.pfx" -Password $PasswordSecString -Confirm:$false
-#>
 
  $CDF = @(
     "[CatalogHeader]",
