@@ -38,27 +38,15 @@ sc SECDRV.cdf -Value $CDF
 $SecdrvSys = dir -ErrorAction SilentlyContinue -Path "$env:SystemDrive\" -Filter SECDRV.sys -Recurse | select -First 1
 copy $secdrvsys.FullName .
 # Create driver signing catalog file (.cat) and copy readable hashes to text file (.txt)
-makecat -v -o SECDRV.txt -r SECDRV.CDF
+makecat -o SECDRV.txt -r SECDRV.CDF
 # Sign the driver
-signtool sign /v /debug /sm /s Root /sha1 "$($Certificate.Thumbprint)" /t "http://timestamp.verisign.com/scripts/timstamp.dll" secdrv.cat
+signtool sign /sm /s Root /sha1 "$($Certificate.Thumbprint)" /t "http://timestamp.verisign.com/scripts/timstamp.dll" secdrv.cat
 
 # Install driver
 copy secdrv.sys "$env:windir\System32\drivers" -Force
-signtool catdb /v /u secdrv.cat
+signtool catdb /u secdrv.cat
 
-# Set to Manual start
-<# Use sc.exe to configure, not direct registry edits
-$DriverRegistryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\secdrv"
-if (!(Test-Path $DriverRegistryPath -ErrorAction SilentlyContinue)) {
-    $Suppress = New-Item -Path $DriverRegistryPath -ItemType Directory
-}
-# <see cref="System.ServiceProcess.ServiceStartMode"/>
-$Automatic = 2
-$Manual = 3
-$Disabled = 4
-$ServiceStartMode = $Manual
-Set-ItemProperty -Path $DriverRegistryPath -Name Start -Value ([int]$ServiceStartMode)
-#>
+# Set to automatic start
 function Enable-SecDrv {
     [CmdLetBinding()]
     param(
