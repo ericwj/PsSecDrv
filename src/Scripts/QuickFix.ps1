@@ -12,7 +12,7 @@ $DateTime = "{0:dd MMM yyyy HH:mm}" -f [System.DateTimeOffset]::Now.ToLocalTime(
 makecert -r -sr LocalMachine -ss Root -n "CN=Private Signing Certificate for SECDRV.sys on \\$env:COMPUTERNAME created by \\$env:USERDOMAIN\$env:USERNAME on $DateTime"
 # Find it in the certificate store
 $Certificate = dir Cert:\LocalMachine\Root | where Subject -Match SECDRV | sort NotBefore | select -Last 1
-Write-Host "Using $($Certificate.Subject)"
+Write-Host "Using certificate $($Certificate.Subject)"
 # Export to file
 <# Don't need this - just need the thumbprint
 $Rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
@@ -47,6 +47,7 @@ copy secdrv.sys "$env:windir\System32\drivers" -Force
 signtool catdb /v /u secdrv.cat
 
 # Set to Manual start
+<# Use sc.exe to configure, not direct registry edits
 $DriverRegistryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\secdrv"
 if (!(Test-Path $DriverRegistryPath -ErrorAction SilentlyContinue)) {
     $Suppress = New-Item -Path $DriverRegistryPath -ItemType Directory
@@ -56,7 +57,8 @@ $Automatic = 2
 $Manual = 3
 $Disabled = 4
 $ServiceStartMode = $Manual
-#Set-ItemProperty -Path $DriverRegistryPath -Name Start -Value ([int]$ServiceStartMode)
+Set-ItemProperty -Path $DriverRegistryPath -Name Start -Value ([int]$ServiceStartMode)
+#>
 function Enable-SecDrv {
     [CmdLetBinding()]
     param(
@@ -90,4 +92,5 @@ function Stop-SecDrv {
     Process { & cmd /c sc stop secdrv }
 }
 Enable-SecDrv -AutoStart
-Start-SecDrv
+# Trying to start before reboot will fail
+# Start-SecDrv
