@@ -89,5 +89,5 @@ function Stop-SecDrv {
     param()
     Process { & cmd /c sc stop secdrv }
 }
-Enable-SecDrv -AutoStart:$false
+Enable-SecDrv -AutoStart
 Start-SecDrv
