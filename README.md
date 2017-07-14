@@ -1,3 +1,4 @@
+# How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
 * Install a game that brings (a recent version of) `SECDRV.sys`.
@@ -6,7 +7,7 @@ Just install all components.
 * Find `makecat.exe`, `makecert.exe` and `signtool.exe` and add the path to your PATH in System Properties, Environment Variables.  
 The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.
 * Create a new folder in your Downloads folder, copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
-* Run all further commands in a Command Prompt or PowerShell as Administrator in the folder you created.
+* Run all further commands in a PowerShell prompt as Administrator in the folder you created.
 * Enable test signing boot mode.  
   ```
   bcdedit /set "{current}" testsigning on
@@ -22,7 +23,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
 * Go to Personal, Certificates and select the certificate created, there usually is only one, or match the subject, right click Copy.
 * Go to Trusted Root Certification Authorities, Certificates. Paste.
 * Go to Trusted Publishers, Certificates. Paste.
-* Make a text file called `SECDRV.cdf` in the folder and put this in it.
+* Make a text file called `SECDRV.cdf` in the folder and put the text between @" and "@ in it.
   ```
   sc -Path SECDRV.cdf -Value @"
   [CatalogHeader]
@@ -55,13 +56,9 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   & cmd /c sc start secdrv # In PowerShell
   ```
-  ```
-  rem In Command Prompt
-  sc start secdrv
-  ```
 
 If it doesn't work, check these reasons.
-* You are not an Administrator or you opened PowerShell or Command Prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* if present, or right click *Command Prompt* and then hit *Run as Administrator* and start over.
+* You are not an Administrator or you opened the PowerShell prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* and start over.
 * `SECDRV.sys` on your system is too old. Then the driver doesn't start. Right click it, hit *Properties*, go to *Details* and check *Product version*. It contains a date as a string. If you downloaded it from the link above, the version is "SECURITY Driver 4.03.086 2006/09/13".
 * Secure Boot is enabled. Run bcdedit again after disabling it.
 * You didn't reboot. You will have to reboot.
