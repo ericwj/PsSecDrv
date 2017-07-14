@@ -1,3 +1,4 @@
+
 # How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
@@ -10,7 +11,16 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   $SdkToolsPath = dir -Path "${env:ProgramFiles(x86)}\Windows Kits\10" -Recurse -Directory | where { $n = $_.FullName; $_.BaseName -eq "x86" -and [System.IO.File]::Exists("$n\makecert.exe") -and [System.IO.File]::Exists("$n\makecat.exe") -and [System.IO.File]::Exists("$n\signtool.exe") }
   $env:Path = "$env:Path;$($SdkToolsPath.FullName)"
   ```
-* Create a new folder in your Downloads folder, copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
+* Create a new folder in your Downloads folder
+  ```
+  $WorkingDirectory = "$env:UserProfile\Downloads\SECDRV"
+  if (-not (Test-Path $WorkingDirectory)) { mkdir $WorkingDirectory | Out-Null }
+  cd $WorkingDirectory
+  ```
+* Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
+  ```
+  curl -UseBasicParsing -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
+  ```
 * Run all further commands in a PowerShell prompt as Administrator in the folder you created.
 * Enable test signing boot mode.  
   ```
