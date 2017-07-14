@@ -5,7 +5,11 @@ Microsoft does provide a way to re-enable SECDRV.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
 * Find `makecat.exe`, `makecert.exe` and `signtool.exe` and add the path to your PATH in System Properties, Environment Variables.  
-The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.
+The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.  
+  ```
+  $SdkToolsPath = dir -Path "${env:ProgramFiles(x86)}\Windows Kits\10" -Recurse -Directory | where { $n = $_.FullName; $_.BaseName -eq "x86" -and [System.IO.File]::Exists("$n\makecert.exe") -and [System.IO.File]::Exists("$n\makecat.exe") -and [System.IO.File]::Exists("$n\signtool.exe") }
+  $env:Path = "$env:Path;$($SdkToolsPath.FullName)"
+  ```
 * Create a new folder in your Downloads folder, copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
 * Run all further commands in a PowerShell prompt as Administrator in the folder you created.
 * Enable test signing boot mode.  
