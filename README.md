@@ -1,4 +1,3 @@
-
 # How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
@@ -8,7 +7,7 @@ Just install all components.
 * Find `makecat.exe`, `makecert.exe` and `signtool.exe` and add the path to your PATH in System Properties, Environment Variables.  
 The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.  
   ```
-  $SdkToolsPath = dir -Path "${env:ProgramFiles(x86)}\Windows Kits\10" -Recurse -Directory | where { $n = $_.FullName; $_.BaseName -eq "x86" -and [System.IO.File]::Exists("$n\makecert.exe") -and [System.IO.File]::Exists("$n\makecat.exe") -and [System.IO.File]::Exists("$n\signtool.exe") }
+  $SdkToolsPath = dir -Path "${env:ProgramFiles(x86)}\Windows Kits\10" -Recurse -Directory | where { $n = $_.FullName; $_.BaseName -eq "x86" -and [System.IO.File]::Exists("$n\makecert.exe") -and [System.IO.File]::Exists("$n\makecat.exe") -and [System.IO.File]::Exists("$n\signtool.exe") } | sort CreationTime | select -Last 1
   $env:Path = "$env:Path;$($SdkToolsPath.FullName)"
   ```
 * Create a new folder in your Downloads folder
