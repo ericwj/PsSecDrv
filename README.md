@@ -14,20 +14,26 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   $WorkingDirectory = "$env:UserProfile\Downloads\SECDRV"
   if (-not (Test-Path $WorkingDirectory)) { mkdir $WorkingDirectory | Out-Null }
-  cd $WorkingDirectory
   ```
 * Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
   ```
   curl -UseBasicParsing -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
   ```
 * Run all further commands in a PowerShell prompt as Administrator in the folder you created.
+  ```
+  cd $WorkingDirectory
+  ```
 * Enable test signing boot mode.  
   ```
   bcdedit /set "{current}" testsigning on
   ```
+* Pick a subject - any subject, but include the text "SECDRV" in it
+  ```
+  $Subject = "SECDRV.sys Publisher by \\$env:ComputerName\$env:UserName on $("{0:yyyy-MM-dd HH:mm}" -f [datetimeoffset]::Now)"
+  ```
 * Create a root certificate.  
   ```
-  makecert -r -sr LocalMachine -ss My -n Subject
+  makecert -r -sr LocalMachine -ss My -n $Subject
   ```
 * Open Local Machine Certificates.  
   ```
@@ -54,11 +60,13 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Get the thumbprint of the certificate you created. The thumbprint is shown in certlm for the certificate created, just double click it and look around, without spaces. Or get it in PowerShell with dir:
   ```PS
-  dir Cert:\LocalMachine -Recurse | where Subject -EQ Subject | select Thumbprint, Subject
+  $Publishers = dir Cert:\LocalMachine -Recurse | where Subject -Match SECDRV | sort NotAfter
+  $Publishers | select Thumbprint, NotBefore, NotAfter, Subject
+  $Publisher = $Publishers | select -Last 1
   ```
 * Sign the driver.  
   ```
-  signtool sign /sm /s Root /sha1 "<SHA1 hex without spaces of the certificate>" /t "http://timestamp.verisign.com/scripts/timstamp.dll" secdrv.cat
+  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /t "http://timestamp.verisign.com/scripts/timstamp.dll" secdrv.cat
   ```
 * Install the driver.
   ```
