@@ -15,13 +15,13 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   $WorkingDirectory = "$env:UserProfile\Downloads\SECDRV"
   if (-not (Test-Path $WorkingDirectory)) { mkdir $WorkingDirectory | Out-Null }
   ```
-* Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
-  ```
-  curl -UseBasicParsing -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
-  ```
 * Run all further commands in a PowerShell prompt as Administrator in the folder you created.
   ```
   cd $WorkingDirectory
+  ```
+* Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
+  ```
+  curl -UseBasicParsing -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
   ```
 * Enable test signing boot mode.  
   ```
