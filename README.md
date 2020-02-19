@@ -21,7 +21,10 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
   ```
-  curl -UseBasicParsing -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
+  # Using curl (Windows 10 has it inbox)
+  curl.exe -OL https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys
+  # Using PowerShell or PowerShell Core
+  iwr -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
   ```
 * Enable test signing boot mode.  
   ```
