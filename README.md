@@ -4,6 +4,7 @@ Microsoft does provide a way to re-enable SECDRV.
 * Install a game that brings (a recent version of) `SECDRV.sys`.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
+* Start *PowerShell* as an administrator.
 * Find `makecat.exe`, `makecert.exe` and `signtool.exe` and add the path to your PATH in System Properties, Environment Variables.  
 The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.  
   ```
@@ -32,7 +33,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Pick a subject - any subject, but include the text "SECDRV" in it
   ```
-  $Subject = "SECDRV.sys Publisher by \\$env:ComputerName\$env:UserName on $("{0:yyyy-MM-dd HH:mm}" -f [datetimeoffset]::Now)"
+  $Subject = "SECDRV.sys Published by \\$env:ComputerName\$env:UserName on $("{0:yyyy-MM-dd HH:mm}" -f [datetimeoffset]::Now)"
   ```
 * Create a root certificate.  
   ```
@@ -47,7 +48,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
 * Go to Trusted Publishers, Certificates. Paste.
 * Make a text file called `SECDRV.cdf` in the folder and put the text between @" and "@ in it.
   ```
-  sc -Path SECDRV.cdf -Value @"
+  Set-Content -Path SECDRV.cdf -Value @"
   [CatalogHeader]
   Name=SECDRV.cat
   PublicVersion=0x1
@@ -61,7 +62,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   makecat -o SECDRV.txt -r SECDRV.cdf
   ```
-* Get the thumbprint of the certificate you created. The thumbprint is shown in certlm for the certificate created, just double click it and look around, without spaces. Or get it in PowerShell with dir:
+* Get the thumbprint of the certificate you created. The thumbprint is shown in `certlm` for the certificate created, just double click it and look around, without spaces. Or get it in PowerShell with dir:
   ```PS
   $Publishers = dir Cert:\LocalMachine -Recurse | where Subject -Match SECDRV | sort NotAfter
   $Publishers | select Thumbprint, NotBefore, NotAfter, Subject
@@ -78,13 +79,13 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
 * Reboot.
 * Test if it works.
   ```
-  & cmd /c sc start secdrv # In PowerShell
+  sc.exe start secdrv
   ```
 
 If it doesn't work, check these reasons.
 * You are not an Administrator or you opened the PowerShell prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* and start over.
 * `SECDRV.sys` on your system is too old. Then the driver doesn't start. Right click it, hit *Properties*, go to *Details* and check *Product version*. It contains a date as a string. If you downloaded it from the link above, the version is "SECURITY Driver 4.03.086 2006/09/13".
-* Secure Boot is enabled. Run bcdedit again after disabling it.
+* Secure Boot is enabled. Run `bcdedit` again after disabling it.
 * You didn't reboot. You will have to reboot.
 
 Now play games.
