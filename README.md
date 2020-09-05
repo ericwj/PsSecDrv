@@ -37,7 +37,10 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Create a root certificate.  
   ```
+  # try this
   makecert -r -sr LocalMachine -ss My -n $Subject
+  # if it doesn't work, use this
+  makecert -r -sr LocalMachine -ss My -n "CN=$Subject"
   ```
 * Open Local Machine Certificates.  
   ```
