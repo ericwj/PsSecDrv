@@ -92,7 +92,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
 If it doesn't work, check these reasons.
 * You are not an Administrator or you opened the PowerShell prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* and start over.
 * `SECDRV.sys` is too old. Then the driver doesn't start. Right click it, hit *Properties*, go to *Details* and check *Product version*. It contains a date as a string. If you downloaded it from the link above, the version is "SECURITY Driver 4.03.086 2006/09/13".
-* You might have to run games that need `SECDRV` as Administrator.
+* You might have to run games that need `SECDRV` as Administrator. The driver might not be installed and the driver services might not be present until you have tried this.
 * Secure Boot is enabled. Run `bcdedit` again after disabling it.
 * You didn't reboot. You will have to reboot.
 
