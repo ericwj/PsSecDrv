@@ -67,7 +67,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Get the thumbprint of the certificate you created. The thumbprint is shown in `certlm` for the certificate created, just double click it and look around, without spaces. Or get it in PowerShell with dir:
   ```PS
-  $Publishers = dir Cert:\LocalMachine -Recurse | where Subject -Match SECDRV | sort NotAfter
+  $Publishers = dir Cert:\LocalMachine -Recurse | where Subject -Match SECDRV | sort NotBefore
   $Publishers | select Thumbprint, NotBefore, NotAfter, Subject
   $Publisher = $Publishers | select -Last 1
   ```
