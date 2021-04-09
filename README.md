@@ -73,7 +73,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
 * Sign the driver.  
   ```
-  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /t "http://timestamp.verisign.com/scripts/timstamp.dll" secdrv.cat
+  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /t http://timestamp.digicert.com secdrv.cat
   ```
 * Install the driver. This adds it to the driver catalog on your system, but does not copy files or create driver services.
   ```
