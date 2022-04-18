@@ -75,13 +75,21 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /t http://timestamp.digicert.com secdrv.cat
   ```
+  If you get `SignTool Error: No file digest algorithm specified. (...) use the /fd certHash option.`, run this instead
+  ```
+  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /fd SHA256 /t http://timestamp.digicert.com secdrv.cat
+  ```
 * Install the driver. This adds it to the driver catalog on your system, but does not copy files or create driver services.
   ```
   signtool catdb /u secdrv.cat
   ```
-* Just to be sure, overwrite the `SECDRV.sys` on your system with the exact version that you signed and installed.
+* Just to be sure, overwrite the `SECDRV.sys` referred to by the kernel driver service with the exact version that you signed and installed.
   ```
-  copy .\SECDRV.sys "$env:windir\System32"
+  sc.exe qc secdrv
+  ```
+  If the output has something like `\??\C:\Windows\system32\drivers\SECDRV.sys`, copy that path excluding `\??\` and use it in the next command:
+  ```
+  copy .\SECDRV.sys "C:\Windows\system32\drivers\SECDRV.sys"
   ```
 * Reboot.
 * Test if it works.
