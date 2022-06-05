@@ -1,7 +1,7 @@
 # How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
-* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guid is 32-bit.
+* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guide is 32-bit.
 * Install a game that brings (a recent version of) `SECDRV.sys`.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
@@ -21,7 +21,7 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   cd $WorkingDirectory
   ```
-* Copy `SECDRV.sys` in it. Match your operating system bitnes.  
+* Copy `SECDRV.sys` in it. Match your operating system bitness.  
   If it's an old version and you're on 64-bit Windows, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
   ```
   # Using curl (Windows 10 has it inbox)
