@@ -1,16 +1,16 @@
 # How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
-* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guide is 32-bit. See how below.
-  ```
-  [System.Environment]::Is64BitOperatingSystem
-  ```
 * Install a game that brings (a recent version of) `SECDRV.sys`.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
 * Start *PowerShell* as an administrator.
+* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guide is 32-bit. See how below.
+  ```
+  [System.Environment]::Is64BitOperatingSystem
+  ```
 * Find `makecat.exe`, `makecert.exe` and `signtool.exe` and add the path to your PATH in System Properties, Environment Variables.  
-The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.  
+  The ones in a x86 subfolder are always OK on all Intel architecture chips. No need to match the hardware or the OS bitness.  
   ```
   $SdkToolsPath = dir -Path "${env:ProgramFiles(x86)}\Windows Kits\10" -Recurse -Directory | where { $n = $_.FullName; $_.BaseName -eq "x86" -and [System.IO.File]::Exists("$n\makecert.exe") -and [System.IO.File]::Exists("$n\makecat.exe") -and [System.IO.File]::Exists("$n\signtool.exe") } | sort CreationTime | select -Last 1
   $env:Path = "$env:Path;$($SdkToolsPath.FullName)"
