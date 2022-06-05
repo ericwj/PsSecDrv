@@ -36,11 +36,11 @@ Just install all components.
 * Check that you have the correct bitness:
   ```
   [string]$str = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$PWD\SECDRV.sys"))
-  [int]$pe = $str.IndexOf("PE", [System.StringComparison]::Ordinal)
+  [int]$pe = $str.IndexOf("PE" + [char]0 + [char]0, [System.StringComparison]::Ordinal)
   $pe
   $str.Substring($pe + 4, 1)
   ```
-  > This reads just one byte of the two-byte PE machine type which happen to be ASCII for these standard machine types, but it will still give wrong results if for some reason the file contains the ASCII bytes `PE` before the actual PE header. So use with caution.
+  > This reads just one byte of the two-byte Portable Executable (PE) machine type which happen to be ASCII for these standard machine types, but it will still give wrong results if for some reason the file contains the ASCII bytes `PE\0\0` before the actual PE header. So use with caution.
 
   If this writes a number between `200` and `300` then yeah you can probably trust this:
   1. If this writes the letter `L`, the driver is 32-bit.  
