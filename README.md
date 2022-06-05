@@ -1,6 +1,7 @@
 # How to install SECDRV.sys to play games
 Microsoft does provide a way to re-enable SECDRV.
 
+* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guid is 32-bit.
 * Install a game that brings (a recent version of) `SECDRV.sys`.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
@@ -20,13 +21,30 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
   ```
   cd $WorkingDirectory
   ```
-* Copy `SECDRV.sys` in it. If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
+* Copy `SECDRV.sys` in it. Match your operating system bitnes.  
+  If it's an old version and you're on 64-bit Windows, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
   ```
   # Using curl (Windows 10 has it inbox)
   curl.exe -OL https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys
   # Using PowerShell or PowerShell Core
   iwr -Uri https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys -OutFile SECDRV.sys
   ```
+  That one is 64-bit.
+* Check that you have the correct bitness:
+  ```
+  [string]$str = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$PWD\SECDRV.sys"))
+  [int]$pe = $str.IndexOf("PE", [System.StringComparison]::Ordinal)
+  $pe
+  $str.Substring($pe + 4, 1)
+  ```
+  > This reads just one byte of the two-byte PE machine type which happen to be ASCII for these standard machine types, but it will still give wrong results if for some reason the file contains the ASCII bytes `PE` before the actual PE header. So use with caution.
+
+  If this writes a number between `200` and `300` then yeah you can probably trust this:
+  1. If this writes the letter `L`, the driver is 32-bit.  
+  1. If this writes the letter `d`, the driver is 64-bit.
+  1. Any other letter well you have to do `type SECDRV.sys | more`, make sure the first two letters are `MZ` and look for `PE` usually all by itself on a line about a screen down of `This program cannot be run in DOS mode.` and see if you can find `L` or `d` two lines down from it.
+  <img width="867" alt="image" src="https://user-images.githubusercontent.com/9473119/172049657-143b5e31-8ffc-419c-82fc-75b3bc85076c.png">
+
 * Enable test signing boot mode.  
   ```
   bcdedit /set "{current}" testsigning on
@@ -100,6 +118,8 @@ The ones in a x86 subfolder are always OK on all Intel architecture chips. No ne
 If it doesn't work, check these reasons.
 * You are not an Administrator or you opened the PowerShell prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* and start over.
 * `SECDRV.sys` is too old. Then the driver doesn't start. Right click it, hit *Properties*, go to *Details* and check *Product version*. It contains a date as a string. If you downloaded it from the link above, the version is "SECURITY Driver 4.03.086 2006/09/13".
+* `SECDRV.sys` is 32-bit and your Windows is 64-bit. Download `SECDRV.sys` from the link given.
+* `SECDRV.sys` is 64-bit and your Windows is 32-bit. Then don't download the driver from the link given, but use whichever version came with the game you installed.
 * You might have to run games that need `SECDRV` as Administrator. The driver might not be installed and the driver services might not be present until you have tried this.
 * Secure Boot is enabled. Run `bcdedit` again after disabling it.
 * You didn't reboot. You will have to reboot.
