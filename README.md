@@ -35,17 +35,16 @@ Just install all components.
   That one is 64-bit.
 * Check that you have the correct bitness:
   ```
-  [string]$str = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$PWD\SECDRV.sys"))
-  [int]$pe = $str.IndexOf("PE" + [char]0 + [char]0, [System.StringComparison]::Ordinal)
-  $pe
-  $str.Substring($pe + 4, 1)
+  $bytes = [System.IO.File]::ReadAllBytes($exe)
+  [int]$pe = [System.Text.Encoding]::ASCII.GetString($bytes).IndexOf("PE" + [char]0 + [char]0)
+  $mc = [System.BitConverter]::ToUInt16($bytes, $pe + 4)
+  switch ($mc) { 0x8664 { "64-bit" } 0x014c { "32-bit" } default { "Unknown" } }
   ```
-  > This reads just one byte of the two-byte Portable Executable (PE) machine type which happen to be ASCII for these standard machine types, but it will still give wrong results if for some reason the file contains the ASCII bytes `PE\0\0` before the actual PE header. So use with caution.
+  > This is a very opportunistic way of reading the machine type in about as few lines as possible by simply finding the first occurrence of `PE\0\0` in the file. So use with caution.
 
-  If this writes a number between `200` and `300` then yeah you can probably trust this:
-  1. If this writes the letter `L`, the driver is 32-bit.  
-  1. If this writes the letter `d`, the driver is 64-bit.
-  1. Any other letter well you have to do `type SECDRV.sys | more`, make sure the first two letters are `MZ` and look for `PE` usually all by itself on a line about a screen down of `This program cannot be run in DOS mode.` and see if you can find `L` or `d` two lines down from it.
+  The even more opportunistic way is to simply do `type SECDRV.sys | more`, make sure the first two letters are `MZ` and look for `PE` usually all by itself on a line about a screen down of `This program cannot be run in DOS mode.` and see if you can find `L` or `d` two lines down from it.
+  1. If the letter is `L` then the PE file is probably 32-bit (`L` is `0x4c` in ASCII).
+  2. If the letter is `d` then the PE file is probably 64-bit (`d` is `0x64` in ASCII).
   <img width="867" alt="image" src="https://user-images.githubusercontent.com/9473119/172049657-143b5e31-8ffc-419c-82fc-75b3bc85076c.png">
 
 * Enable test signing boot mode.  
