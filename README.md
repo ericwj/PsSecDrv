@@ -35,7 +35,7 @@ Just install all components.
   That one is 64-bit.
 * Check that you have the correct bitness:
   ```
-  $bytes = [System.IO.File]::ReadAllBytes($exe)
+  $bytes = [System.IO.File]::ReadAllBytes("$PWD\SECDRV.sys")
   [int]$pe = [System.Text.Encoding]::ASCII.GetString($bytes, 0, 1KB).IndexOf("PE`0`0")
   $mc = [System.BitConverter]::ToUInt16($bytes, $pe + 4)
   switch ($mc) { 0x8664 { "64-bit" } 0x014c { "32-bit" } default { "Unknown" } }
