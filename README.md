@@ -2,6 +2,9 @@
 Microsoft does provide a way to re-enable SECDRV.
 
 * Install a game that brings (a recent version of) `SECDRV.sys`.
+* Start the game. It should prompt for elevation. Elevate. It won't work, but you have to do it once.  
+  If there is an error about insufficient permissions, launch the game explicitly as Administrator, either by right-clicking the shortcut and selecting *Run as Administrator* or by launching the game by typing the executables path and name from an elevated command prompt.  
+  Dismiss all errors about things not working and quit the game. Also ignore and do not accept any changes suggested by Windows to run the game in compatibility mode or as Administrator or anything else. That might still be required for the game itself, it is not required for SECDRV to work besides running it elevated just once.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
 * Start *PowerShell* as an administrator.
