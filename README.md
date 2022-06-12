@@ -90,7 +90,7 @@ Just install all components.
   ```
 * Get the thumbprint of the certificate you created. The thumbprint is shown in `certlm` for the certificate created, just double click it and look around, without spaces. Or get it in PowerShell with dir:
   ```PS
-  $Publishers = dir Cert:\LocalMachine -Recurse | where Subject -Match SECDRV | sort NotBefore
+  $Publishers = dir Cert:\LocalMachine\TrustedPublisher | where HasPrivateKey | sort NotAfter
   $Publishers | select Thumbprint, NotBefore, NotAfter, Subject
   $Publisher = $Publishers | select -Last 1
   ```
