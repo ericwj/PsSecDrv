@@ -96,11 +96,11 @@ Just install all components.
   ```
 * Sign the driver.  
   ```
-  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /t http://timestamp.digicert.com secdrv.cat
+  signtool sign /sm /s TrustedPublisher /sha1 "$($Publisher.Thumbprint)" /t http://timestamp.digicert.com secdrv.cat
   ```
   If you get `SignTool Error: No file digest algorithm specified. (...) use the /fd certHash option.`, run this instead
   ```
-  signtool sign /sm /s Root /sha1 "$($Publisher.Thumbprint)" /fd SHA256 /t http://timestamp.digicert.com secdrv.cat
+  signtool sign /sm /s TrustedPublisher /sha1 "$($Publisher.Thumbprint)" /fd SHA256 /t http://timestamp.digicert.com secdrv.cat
   ```
 * Install the driver. This adds it to the driver catalog on your system, but does not copy files or create driver services.
   ```
