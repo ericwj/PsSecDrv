@@ -1,5 +1,5 @@
 # How to install SECDRV.sys to play games
-Microsoft does provide a way to re-enable SECDRV.
+Microsoft does provide a way to enable `SECDRV` on 64-bit Windows.
 
 * Install a game that brings (a recent version of) `SECDRV.sys`.
 * Start the game. It should prompt for elevation. Elevate. It won't work, but you have to do it once.  
@@ -8,7 +8,7 @@ Microsoft does provide a way to re-enable SECDRV.
 * Install the Windows 10 SDK from [Get the standalone Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).  
 Just install all components.
 * Start *PowerShell* as an administrator.
-* Make sure you are on 64-bit Windows, or make sure whichever `SECDRV.sys` you will be using going through this guide is 32-bit. See how below.
+* Make sure you are on 64-bit Windows. Going through this guide on 32-bit Windows is pretty pointless - games should work without. `SECDRV` just works on 32-bit Windows.
   ```
   [System.Environment]::Is64BitOperatingSystem
   ```
@@ -28,7 +28,7 @@ Just install all components.
   cd $WorkingDirectory
   ```
 * Copy `SECDRV.sys` in it. Match your operating system bitness.  
-  If it's an old version and you're on 64-bit Windows, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
+  If it's an old version, replace it with this one downloadable [here](https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys). Its from September 2006.
   ```
   # Using curl (Windows 10 has it inbox)
   curl.exe -OL https://github.com/ericwj/PsSecDrv/raw/master/tools/SECDRV/SECDRV.sys
@@ -124,7 +124,7 @@ If it doesn't work, check these reasons.
 * You are not an Administrator or you opened the PowerShell prompt without elevation. Right click the button in the Task Bar and hit *Run as Administrator* and start over.
 * `SECDRV.sys` is too old. Then the driver doesn't start. Right click it, hit *Properties*, go to *Details* and check *Product version*. It contains a date as a string. If you downloaded it from the link above, the version is "SECURITY Driver 4.03.086 2006/09/13".
 * `SECDRV.sys` is 32-bit and your Windows is 64-bit. Download `SECDRV.sys` from the link given.
-* `SECDRV.sys` is 64-bit and your Windows is 32-bit. Then don't download the driver from the link given, but use whichever version came with the game you installed.
+* `SECDRV.sys` is 64-bit and your Windows is 32-bit. Then don't download the driver from the link given, but use whichever version came with the game you installed. Also you shouldn't have started following this guide in the first place.
 * You might have to run games that need `SECDRV` as Administrator. The driver might not be installed and the driver services might not be present until you have tried this.
 * Secure Boot is enabled. Run `bcdedit` again after disabling it.
 * You didn't reboot. You will have to reboot.
